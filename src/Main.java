@@ -66,11 +66,29 @@ public class Main {
 	public static Cell[][] solve(Cell[][] puzzle) throws InterruptedException{
 		long beginTime = System.currentTimeMillis();
 		flagStarters(puzzle);
-		int rows = 0;
-		int cols = 0;
+		int row = 0;
+		int col = 0;
 		/* --------------- Solving Algorithm ----------------- */
-		while(rows<10 && cols<10){
+		while(row<10 && col<10){
+			//check if current cell is a starting value.
+			if(!puzzle[row][col].isStarter()){
+				puzzle[row][col].setValue(puzzle[row][col].getValue()+1);
+				//check row and column --> if good conitnue to next cell, else increment value by one.
+				if(checkRow(puzzle, puzzle[row][col].getValue(), row, col) &&
+						checkCol(puzzle, puzzle[row][col].getValue(), row, col)){
+					
+					//increment one spcae on teh board
+					col++;
+					if(col > 9){ //reset column value and increase row value if las column in row is reached
+						col=0;
+						row++;
+					}
+					continue;
+					
+				}else continue; // if there is an issue with checking the row or column, continue and increase the value one more time.
 			
+			
+			}else col++;
 			
 		}
 		
@@ -79,6 +97,32 @@ public class Main {
 		long endTime = System.currentTimeMillis();
 		System.out.println("Total time to solve: "+(endTime-beginTime)/1000.0+" seconds");
 		return puzzle;
+	}
+	
+/**
+ * Method to check the row of a cell for conflicting values
+ * - Returns false if there is a conflict
+ */
+	public static boolean checkRow(Cell[][] puzzle, int value, int currentRow, int currentCol){
+		for(int i=0; i<10; i++){
+			if(i==currentCol) continue;
+			if(puzzle[currentRow][i].getValue() == value) return false;
+		}
+		
+		return true;
+	}
+	
+	
+/**
+ * Method to check the columns of a cell for conflicting values
+ */
+	public static boolean checkCol(Cell[][] puzzle, int value, int currentRow, int currentCol){
+		for(int i=0; i<10; i++){
+			if(i==currentRow) continue;
+			if(puzzle[currentCol][i].getValue() == value) return false;
+		}
+		
+		return true;
 	}
 	
 /**
