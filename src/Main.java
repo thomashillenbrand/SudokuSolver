@@ -4,19 +4,19 @@ import java.util.Scanner;
 
 /*
  *  TODO:
- *  - Have issue where the last block doesn't get completely solved because while loop ends.
+ *  
  */
 
 public class Main {
 
 	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
 		// TODO Auto-generated method stub
-		File board = new File("evilSudokuBoard.txt");
+		File board = new File("INSERT SUDOKU BOARD FILE HERE");
 
-		Cell[][] easyPuzzle = loadBoard(board);
-		printSudoku(easyPuzzle);
+		Cell[][] puzzle = loadBoard(board);
+		printSudoku(puzzle);
 
-		Cell[][] solution = solve(easyPuzzle);
+		Cell[][] solution = solve(puzzle);
 		printSudoku(solution);
 
 
@@ -78,11 +78,7 @@ public class Main {
 		while(row<8 || col<8 || !checkRow(puzzle, puzzle[row][col].getValue(), row, col)){
 			row = position.getRow();
 			col = position.getCol();
-			
-			//System.out.println("Row: "+row);
-			//System.out.println("Col: "+col);
-			
-			//printSudoku(puzzle);
+
 			//check if current cell is a starting value.
 			if(!puzzle[row][col].isStarter()){
 				//check if the value is greater than 9, if so, reset to zero and move back a space.
@@ -118,7 +114,7 @@ public class Main {
 		/* --------------------------------------------------- */
 
 		long endTime = System.currentTimeMillis();
-		System.out.println("Total time to solve: "+(endTime-beginTime)+" seconds");
+		System.out.println("Total time to solve: "+(endTime-beginTime)+" milli seconds");
 		return puzzle;
 
 	}//end solve method
