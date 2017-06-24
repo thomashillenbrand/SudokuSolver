@@ -14,13 +14,9 @@ public class Main {
 		File board = new File("sudokuBoard.txt");
 
 		Cell[][] easyPuzzle = loadBoard(board);
-		System.out.println(8%3);
-		System.out.println(1%3);
-		
 		printSudoku(easyPuzzle);
 
 		Cell[][] solution = solve(easyPuzzle);
-
 		printSudoku(solution);
 
 
