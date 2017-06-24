@@ -4,14 +4,14 @@ import java.util.Scanner;
 
 /*
  *  TODO:
- *  - create check block method
+ *  - Have issue where the last block doesn't get completely solved because while loop ends.
  */
 
 public class Main {
 
 	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
 		// TODO Auto-generated method stub
-		File board = new File("sudokuBoard.txt");
+		File board = new File("evilSudokuBoard.txt");
 
 		Cell[][] easyPuzzle = loadBoard(board);
 		printSudoku(easyPuzzle);
@@ -63,7 +63,7 @@ public class Main {
 	}
 
 	/**
-	 * method to solve the sudoku puzzle thru brute force algorithm
+	 * method to solve the sudoku puzzle thru brute force algorithm 
 	 * @param puzzle
 	 * @return
 	 * @throws InterruptedException 
@@ -75,7 +75,7 @@ public class Main {
 		int row=0;
 		int col=0;
 		/* --------------- Solving Algorithm ----------------- */
-		while(row<8 || col<8){
+		while(row<8 || col<8 || !checkRow(puzzle, puzzle[row][col].getValue(), row, col)){
 			row = position.getRow();
 			col = position.getCol();
 			
