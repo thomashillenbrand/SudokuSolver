@@ -11,7 +11,7 @@ public class Main {
 
 	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
 		// TODO Auto-generated method stub
-		File board = new File("INSERT SUDOKU BOARD FILE HERE");
+		File board = new File("INSERT BOARD TXT FILE HERE");
 
 		Cell[][] puzzle = loadBoard(board);
 		printSudoku(puzzle);
@@ -98,6 +98,7 @@ public class Main {
 					puzzle[row][col].setValue(0);
 					do{
 						position.moveBackward();
+						
 					}while(puzzle[position.getRow()][position.getCol()].isStarter());
 					continue;
 					
