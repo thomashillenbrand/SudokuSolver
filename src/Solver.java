@@ -2,32 +2,35 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-/*
- *  TODO:
- *  
- */
+public class Solver {
 
-public class Main {
+	private Cell[][] puzzle;
 
 	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
-		// TODO Auto-generated method stub
-		File board = new File("INSERT BOARD TXT FILE HERE");
 
-		Cell[][] puzzle = loadBoard(board);
-		printSudoku(puzzle);
+		File board = new File("INSERT FILE NAME HERE");
+		Solver solver = new Solver();
 
-		Cell[][] solution = solve(puzzle);
-		printSudoku(solution);
+		solver.loadBoard(board);
+		solver.printPuzzle();
 
+		solver.solve();
+		solver.printPuzzle();
 
 	}
 
 	/**
-	 *  Method to print out the sudoku board
-	 * @param board
+	 * Default constructor
 	 */
-	public static void printSudoku(Cell[][] board){
-		for(Cell[] row : board){
+	public Solver(){
+
+	}
+
+	/**
+	 *  Method to print out the loaded sudoku board
+	 */
+	public void printPuzzle(){
+		for(Cell[] row : this.puzzle){
 			for(Cell cell : row){
 				cell.printCell();
 			}
@@ -42,9 +45,9 @@ public class Main {
  * @return
  * @throws FileNotFoundException
  */
-	public static Cell[][] loadBoard(File sudokuFile) throws FileNotFoundException{
+	public void loadBoard(File sudokuFile) throws FileNotFoundException{
 		Scanner fileScanner = new Scanner(sudokuFile);
-		Cell[][] sudoku = new Cell[9][9];
+		this.puzzle = new Cell[9][9];
 		int j=0; //columns
 		int i=0; //rows
 		while (fileScanner.hasNextLine()){
@@ -52,61 +55,57 @@ public class Main {
 			String line = fileScanner.nextLine();
 			String[] splitLine = line.split(",");
 			for(String val : splitLine){
-				sudoku[i][j] = new Cell(Integer.parseInt(val));
+				this.puzzle[i][j] = new Cell(Integer.parseInt(val));
 				j++;
 			}
 			i++;
 
 		}
 
-		return sudoku;
 	}
 
 	/**
-	 * method to solve the sudoku puzzle thru brute force algorithm 
-	 * @param puzzle
-	 * @return
+	 * method to solve the sudoku puzzle thru brute force algorithm
+	 *
 	 * @throws InterruptedException 
 	 */
-	public static Cell[][] solve(Cell[][] puzzle) {
+	public void solve() {
 		long beginTime = System.currentTimeMillis();
-		flagStarters(puzzle);
+		flagStarters(this.puzzle);
 		Tracker position = new Tracker();
 		int row=0;
 		int col=0;
 		/* --------------- Solving Algorithm ----------------- */
-		while(row<8 || col<8 || !checkRow(puzzle, puzzle[row][col].getValue(), row, col)){
+		while(row<8 || col<8 || !checkRow(this.puzzle, this.puzzle[row][col].getValue(), row, col)){
 			row = position.getRow();
 			col = position.getCol();
 
 			//check if current cell is a starting value.
-			if(!puzzle[row][col].isStarter()){
+			if(!this.puzzle[row][col].isStarter()){
 				//check if the value is greater than 9, if so, reset to zero and move back a space.
-				if(puzzle[row][col].getValue()+1 <= 9){
-					puzzle[row][col].setValue(puzzle[row][col].getValue()+1);
+				if(this.puzzle[row][col].getValue()+1 <= 9){
+					this.puzzle[row][col].setValue(this.puzzle[row][col].getValue()+1);
 					//check row and column --> if good continue to next cell, else increment value by one.
-					if(checkRow(puzzle, puzzle[row][col].getValue(), row, col) &&
-							checkCol(puzzle, puzzle[row][col].getValue(), row, col) && 
-							checkBlock(puzzle, puzzle[row][col].getValue(), row, col)){
+					if(check(this.puzzle, this.puzzle[row][col].getValue(), row, col)){
 						//increment one space on the board
 						position.moveForward();
-						continue;
+						//continue;
 
-					}else continue; // if there is an issue with checking the row or column, continue and increase the value one more time.
+					}//else continue; // if there is an issue with checking the row or column, continue and increase the value one more time.
 
 				}else{//move back a space
-					puzzle[row][col].setValue(0);
+					this.puzzle[row][col].setValue(0);
 					do{
 						position.moveBackward();
 						
-					}while(puzzle[position.getRow()][position.getCol()].isStarter());
-					continue;
+					}while(this.puzzle[position.getRow()][position.getCol()].isStarter());
+					//continue;
 					
 				}
 				
 			}else{//if the cell is a starter cell, increment one more space on the board
 				position.moveForward();
-				continue;
+				//continue;
 			}
 			
 
@@ -115,10 +114,18 @@ public class Main {
 		/* --------------------------------------------------- */
 
 		long endTime = System.currentTimeMillis();
-		System.out.println("Total time to solve: "+(endTime-beginTime)+" milli seconds");
-		return puzzle;
+		System.out.println("Total time to solve: "+(endTime-beginTime)+" ms");
 
 	}//end solve method
+
+	public boolean check(Cell[][] puzzle, int value, int currentRow, int currentCol){
+
+		boolean check = checkRow(puzzle, value, currentRow, currentCol) &&
+										checkCol(puzzle, value, currentRow, currentCol) &&
+										checkBlock(puzzle, value, currentRow, currentCol);
+
+		return check;
+	}
 
 /**
  * Method to check the row of a cell for conflicting values
@@ -128,7 +135,7 @@ public class Main {
  * @param currentCol
  * @return
  */
-	public static boolean checkRow(Cell[][] puzzle, int value, int currentRow, int currentCol){
+	public boolean checkRow(Cell[][] puzzle, int value, int currentRow, int currentCol){
 		for(int i=0; i<9; i++){
 			if(i==currentCol) continue;
 			if(puzzle[currentRow][i].getValue() == value) return false;
@@ -146,7 +153,7 @@ public class Main {
  * @param currentCol
  * @return
  */
-	public static boolean checkCol(Cell[][] puzzle, int value, int currentRow, int currentCol){
+	public boolean checkCol(Cell[][] puzzle, int value, int currentRow, int currentCol){
 		for(int i=0; i<9; i++){
 			if(i==currentRow) continue;
 			if(puzzle[i][currentCol].getValue() == value) return false;
@@ -163,7 +170,7 @@ public class Main {
 	 * @param currentCol
 	 * @return
 	 */
-	public static boolean checkBlock(Cell[][] puzzle, int value, int currentRow, int currentCol){
+	public boolean checkBlock(Cell[][] puzzle, int value, int currentRow, int currentCol){
 		int row = currentRow - (currentRow%3);
 		int col = currentCol - (currentCol%3);
 		
@@ -181,7 +188,7 @@ public class Main {
 	 * Method to set the starter flag on the non-zero values so the algorithm skips them
 	 * @param puzzle
 	 */
-	public static void flagStarters(Cell[][] puzzle){
+	public void flagStarters(Cell[][] puzzle){
 		for(Cell[] row : puzzle){
 			for(Cell cell : row){
 				if(cell.getValue() != 0) cell.setStarter(true);
